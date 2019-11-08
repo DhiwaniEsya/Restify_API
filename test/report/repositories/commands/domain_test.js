@@ -21,6 +21,11 @@ describe(__filename, () => {
     }
   };
 
+  const queryResultError = {
+    'err': true,
+    'data': null,
+  };
+
   const db = {
     setCollection: sinon.stub()
   };
@@ -53,4 +58,78 @@ describe(__filename, () => {
     });
   });
 
+  describe('updateReport', () => {
+
+    let payload = {
+      ...queryResult
+    };
+    it('should return error', async() => {
+      sinon.stub(query.prototype, 'findOneReport').resolves(queryResultError);
+
+      const res = await report.updateReport(payload);
+      assert.notEqual(res.code,404);
+
+      query.prototype.findOneReport.restore();
+    });
+
+    it('should success update report', async() => {
+      sinon.stub(query.prototype, 'findOneReport').resolves(queryResult);
+      sinon.stub(command.prototype, 'updateOneReport').resolves(queryResult);
+
+      const res = await report.updateReport(payload);
+      assert.equal(res.code,200);
+
+      query.prototype.findOneReport.restore();
+      command.prototype.updateOneReport.restore();
+    });
+    it('should success update report 2', async() => {
+      sinon.stub(query.prototype, 'findOneReport').resolves(queryResult);
+      sinon.stub(command.prototype, 'updateOneReport').resolves(queryResult);
+
+      payload = queryResult.data;
+      payload.report_id = 'ui-dsj';
+
+      const res = await report.updateReport(payload);
+      assert.equal(res.code,200);
+
+      query.prototype.findOneReport.restore();
+      command.prototype.updateOneReport.restore();
+    });
+  });
+  describe('deleteReport', () => {
+
+    let payload = {
+      ...queryResult
+    };
+    it('should return error', async() => {
+      sinon.stub(query.prototype, 'findOneReport').resolves(queryResultError);
+
+      const res = await report.deleteReport(payload);
+      assert.notEqual(res.code,404);
+
+      query.prototype.findOneReport.restore();
+    });
+
+    it('should success delete report', async() => {
+      sinon.stub(query.prototype, 'findOneReport').resolves(queryResult);
+      sinon.stub(command.prototype, 'deleteOneReport').resolves(queryResult);
+
+      const res = await report.deleteReport(payload);
+      assert.equal(res.code,200);
+
+      query.prototype.findOneReport.restore();
+      command.prototype.deleteOneReport.restore();
+    });
+    it('should error delete report', async() => {
+      sinon.stub(query.prototype, 'findOneReport').resolves(queryResult);
+      sinon.stub(command.prototype, 'deleteOneReport').resolves(queryResultError);
+
+      payload = queryResult.data;
+      const res = await report.deleteReport(payload);
+      assert.equal(res.code,500);
+
+      query.prototype.findOneReport.restore();
+      command.prototype.deleteOneReport.restore();
+    });
+  });
 });

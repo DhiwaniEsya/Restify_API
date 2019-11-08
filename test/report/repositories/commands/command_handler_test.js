@@ -42,5 +42,31 @@ describe(__filename, () => {
       Report.prototype.insertReport.restore();
     });
   });
+  describe('updateReport', () => {
+
+    it('should info success update report', async() => {
+      sinon.stub(Report.prototype, 'updateReport').resolves(data);
+
+      const res = await commandHandler.updateReport(payload);
+
+      assert.notEqual(res.data, null);
+      assert.equal(res.code, 200);
+
+      Report.prototype.updateReport.restore();
+    });
+  });
+  describe('deleteReport', () => {
+
+    it('should info success delete report', async() => {
+      sinon.stub(Report.prototype, 'deleteReport').resolves(data);
+
+      const res = await commandHandler.deleteReport(payload);
+
+      assert.notEqual(res.data, null);
+      assert.equal(res.code, 200);
+
+      Report.prototype.deleteReport.restore();
+    });
+  });
 });
 
